@@ -1,2 +1,2 @@
-#Pre-publish html folder
-This is the pre-publish html database for testing and double-checking
+#StoryName
+This is the database for the story titles assigned to each 's'
