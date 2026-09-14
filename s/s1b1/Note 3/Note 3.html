@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> m&#181c | Micro Stories </title>
+    <style>
+        /* The Texture Layer */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #F8F5F0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 500px; 
+            width: 90%;
+            background: #ffffff;
+            margin: 40px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border-radius: 1px;
+            border: 1px solid #E6E2D8;
+            position: relative;
+        }
+
+        .content-padding {
+            padding: 50px 35px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-weight: normal;
+            font-style: italic;
+            letter-spacing: -0.2px;
+        }
+
+        .story-meta {
+            font-size: 0.8rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #A8A095;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .centered-text {
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .right-text {
+            display: inline-block;
+            text-align: right;
+            width: 100%;
+        }
+
+        @font-face {
+            font-family: 'Special Elite Offline';
+            src: url('SpecialElite-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .converted-text-box {
+            font-family: 'Special Elite Offline', 'American Typewriter', Courier, monospace;
+            font-weight: normal;
+            font-style: normal;
+            line-height: 1.8;
+            font-size: 1.2rem;
+            white-space: pre-wrap;
+            color: #2c2c2c;
+            margin-bottom: 50px;
+            position: relative;
+            text-align: justified;
+        }
+
+        .converted-text-box::before {
+            content: "“";
+            position: absolute;
+            left: -25px;
+            top: -10px;
+            font-size: 3rem;
+            color: #E6E2D8;
+            font-family: serif;
+        }
+
+        .converted-text-box::after {
+            content: "”";
+            position: absolute;
+            right: -25px;
+            bottom: -40px;
+            font-size: 3rem;
+            color: #E6E2D8;
+            font-family: serif;
+        }
+
+        .handwritten-note-img {
+            width: 100%;
+            height: auto;
+            border-radius: 1px;
+            filter: sepia(10%) contrast(98%);
+            border: 8px solid #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transform: rotate(-0.5deg);
+        }
+
+        .origin-stamp {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.6;
+            text-align: center;
+            border-top: 1px solid #F0EFEA;
+            padding-top: 25px;
+            font-style: italic;
+        }
+
+        .takedown-trigger {
+            display: inline-block;
+            margin-top: 15px;
+            color: #A8A095;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            font-style: normal;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .takedown-trigger:hover {
+            color: #555;
+        }
+
+        footer {
+            text-align: center;
+            padding: 0px 20px 80px 20px;
+            font-size: 0.8rem;
+            color: #BBB;
+            letter-spacing: 1px;
+        }
+
+        /* --- TAKEDOWN MODAL STYLES --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(248, 245, 240, 0.85);
+            backdrop-filter: blur(3px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 88%;
+            max-width: 440px;
+            padding: 35px 30px;
+            border: 1px solid #E6E2D8;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .modal-card h2 {
+            font-size: 1.1rem;
+            font-weight: normal;
+            font-style: italic;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .modal-card p {
+            font-size: 0.78rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .form-group input[type="email"],
+        .form-group textarea,
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px 12px;
+            font-family: 'Georgia', serif;
+            font-size: 0.85rem;
+            border: 1px solid #E6E2D8;
+            background: #FDFCFB;
+            color: #333;
+            box-sizing: border-box;
+            border-radius: 0;
+            outline: none;
+        }
+
+        .form-group input[type="file"] {
+            font-size: 0.75rem;
+            background: #fff;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #A8A095;
+            background: #ffffff;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #F0EFEA;
+        }
+
+        .btn-submit {
+            background: #2c2c2c;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Georgia', serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: #000000;
+        }
+
+        .btn-cancel {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .btn-cancel:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="content-padding">
+            <h1>When was the last time you felt Hopeful?</h1>
+            
+            <!-- SINGLE POINT OF ENTRY FOR NOTE NUMBER -->
+            <div class="story-meta">
+                Note #<span id="noteNum">03</span>
+            </div>
+
+            <div class="converted-text-box">
+		Everyday <3
+		Cause I know that
+		my God is with me
+		all the time
+		grateful for my
+		reborn, saviour,
+		my new life in Christ.
+
+		May God bless you <3
+		He knows what we are
+		going through, believe that
+		He is with you.
+            </div>
+
+            <img src="Note 3 Image.png" alt="Handwritten Note" class="handwritten-note-img">
+
+            <div class="origin-stamp">
+                This story was captured from a human hand<br>
+                in a car. In Klang Valley, Malaysia. Year 2025.<br>
+                A Note from Passenger.<br>
+                
+                <span class="takedown-trigger" onclick="openTakedownModal()">Did you write this note? Request removal</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Congratulations.
+    </footer>
+
+    <!-- TAKEDOWN MODAL OVERLAY -->
+    <div id="takedownModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Author Verification & Removal</h2>
+            <p>If you wrote Note #<span class="sync-note-num">102</span> and wish to have it modified or taken down, please provide your contact email and a quick photo of your handwriting for verification.</p>
+
+            <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data">
+                
+                <input type="hidden" name="note_number" id="hiddenNoteNumber" value="102">
+
+                <div class="form-group">
+                    <label for="email">Your Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="author@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="verification_photo">Handwriting Verification</label>
+                    <input type="file" id="verification_photo" name="verification_photo" accept="image/*" required>
+                    <span style="font-size:0.68rem; color:#999; display:block; margin-top:4px; font-style:italic;">
+                        Please write "Request takedown Note #<span class="sync-note-num">102</span>" on a scrap paper & snap a photo.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Additional Context (Optional)</label>
+                    <textarea id="message" name="message" rows="2" placeholder="Any specific details you'd like us to know..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeTakedownModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Logic
+        function openTakedownModal() {
+            document.getElementById('takedownModal').style.display = 'flex';
+        }
+
+        function closeTakedownModal() {
+            document.getElementById('takedownModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('takedownModal');
+            if (event.target === modal) {
+                closeTakedownModal();
+            }
+        }
+
+        // Note Number Auto-Sync Logic
+        document.addEventListener("DOMContentLoaded", function() {
+            const noteNumElement = document.getElementById('noteNum');
+            if (!noteNumElement) return;
+
+            const currentNoteNum = noteNumElement.textContent.trim();
+
+            const hiddenField = document.getElementById('hiddenNoteNumber');
+            if (hiddenField) {
+                hiddenField.value = currentNoteNum;
+            }
+
+            document.querySelectorAll('.sync-note-num').forEach(el => {
+                el.textContent = currentNoteNum;
+            });
+        });
+    </script>
+
+</body>
+</html>
